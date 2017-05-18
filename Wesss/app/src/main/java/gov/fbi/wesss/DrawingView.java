@@ -79,6 +79,11 @@ public class DrawingView extends View {
 
     // idk if it works lul
     public void clearCanvas() {
-        drawCanvas.drawColor(WHITE);
+//        drawCanvas.drawColor(WHITE);
+//        drawCanvas.drawColor(BLACK);
+        Paint test_paint = new Paint();
+        test_paint.setStyle(Paint.Style.FILL);
+        test_paint.setColor(BLACK);
+        drawCanvas.drawRect(0, 0, drawCanvas.getWidth(), drawCanvas.getHeight(), test_paint);
     }
 }

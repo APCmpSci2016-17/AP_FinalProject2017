@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     public void onClick(View view) {
         if (view.getId() == R.id.x_btn) {
             //Clear button clicked
+            System.out.println("CLEAR BUTTON PRESSED");
             drawView.clearCanvas();
         }
     }
