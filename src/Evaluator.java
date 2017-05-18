@@ -103,6 +103,15 @@ public class Evaluator {
 			for (int i = 1; i < 10000; i++) a += 1/Math.pow(i,n);
 			num.push(a);
 			break;
+		case "abs": //absolute value function
+			num.push(Math.abs(num.pop()));
+			break;
+		case "ln": //natural log function
+			num.push(Math.log(num.pop()));
+			break;
+		case "log": //log base 10 function
+			num.push(Math.log10(num.pop()));
+			break;
 		default: //If the function is invalid (not on the list)
 			throw new ArithmeticException();
 		}
@@ -176,16 +185,16 @@ public class Evaluator {
 					int cop;
 					if (stackFlag) { //if the last stack modified was the number stack
 						int bin = binaries.indexOf(c); //binary index of the current character
-						if (bin >= 0) {
-							cop = bin;
-							stackFlag = false;
-						} else {
-							cop = postfixes.indexOf(c); //postfix index ot the current character
-							stackFlag = true;
+						if (bin >= 0) { //if the character is in the binary list
+							cop = bin; //set cop = bin
+							stackFlag = false; //last stack modified will be the symbol stack
+						} else { //if the character isn't in the binary list
+							cop = postfixes.indexOf(c); //set cop = postfix index of the current character
+							stackFlag = true; //last stack modified will be the number stack
 						}
-					} else {
-						cop = prefixes.indexOf(c);
-						stackFlag = false;
+					} else { //if the last stack modified was the symbol stack
+						cop = prefixes.indexOf(c); //set cop = prefix index of the current character
+						stackFlag = false; //last stack modified will be the symbol stack
 					}
 					
 					while (c == ')' || (!sym.isEmpty() && prec.get(sym.peek()) >= prec.get(cop))) {
