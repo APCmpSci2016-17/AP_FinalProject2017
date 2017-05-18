@@ -44,10 +44,13 @@ public class Evaluator {
 //		System.out.println(stringEval("3/0+1") + "\n"); //Divide by zero: this case should fail
 		System.out.println(stringEval("4*double(4!-5)") + "\n");
 		System.out.println(stringEval("max(sin(6/5),cos(6/5))") + "\n");
-		System.out.println(stringEval("max(sin(1.2),cos(1.2))") + "\n");
+		System.out.println(stringEval("max(sin(1.2),cos(1.2),1)") + "\n");
+		System.out.println(stringEval("max(1,21,3,4,2,1,2)") + "\n");
+		System.out.println(stringEval("zeta(2)") + "\n");
+		System.out.println(stringEval("5(3)") + "\n");
 	}
 	
-	private static void applyFunc(String str, Stack<Double> num) {
+	private static void applyFunc(String str, Stack<Double> num, int numArgs) {
 		switch (str) {
 		case "double":
 			num.push(num.pop()*2);
@@ -59,7 +62,36 @@ public class Evaluator {
 			num.push(Math.cos(num.pop()));
 			break;
 		case "max":
-			num.push(Math.max(num.pop(), num.pop()));
+			double m = num.pop();
+			for (int i = 1; i < numArgs; i++) m = Math.max(m, num.pop());
+			num.push(m);
+			break;
+		case "tan":
+			num.push(Math.tan(num.pop()));
+			break;
+		case "csc":
+			num.push(1/Math.sin(num.pop()));
+			break;
+		case "sec":
+			num.push(1/Math.cos(num.pop()));
+			break;
+		case "cot":
+			num.push(1/Math.tan(num.pop()));
+			break;
+		case "arctan":
+			num.push(Math.atan(num.pop()));
+			break;
+		case "arcsin":
+			num.push(Math.asin(num.pop()));
+			break;
+		case "arccos":
+			num.push(Math.acos(num.pop()));
+			break;
+		case "zeta":
+			double n = num.pop();
+			double a = 0;
+			for (int i = 1; i < 10000; i++) a += 1/Math.pow(i,n);
+			num.push(a);
 			break;
 		}
 	}
@@ -69,6 +101,7 @@ public class Evaluator {
 		Stack<Integer> sym = new Stack<>(); //Symbol stack
 		Stack<Double> num = new Stack<>(); //Number stack
 		Stack<String> func = new Stack<>(); //Number stack
+		Stack<Integer> args = new Stack<>();
 		int decimals = -1;
 		double numBuff = 0; //Number buffer (for multiple digit numbers)
 		boolean numFlag = false; //True when current character read is a number
@@ -94,8 +127,10 @@ public class Evaluator {
 					strBuff += Character.toString(c);
 				}
 			} else if (Character.isDigit(c)) { //If the character is a digit...
-				
 				if (!numFlag) { //If the last character read was not a number clear the buffer
+					if (stackFlag) {
+						sym.push(3);
+					}
 					numFlag = true;
 					numBuff = 0;
 				}
@@ -117,7 +152,11 @@ public class Evaluator {
 						func.push(strBuff);
 						strBuff = null;
 						sym.push(9);
+						args.push(1);
 					} else {
+						if (stackFlag) {
+							sym.push(3);
+						}
 						sym.push(0);
 					}
 					stackFlag = false;
@@ -196,7 +235,7 @@ public class Evaluator {
 							num.push(-op1);
 							break;
 						case 9: // ( (function)
-							applyFunc(func.pop(), num);
+							applyFunc(func.pop(), num, args.pop());
 							stopEval = true;
 							break;
 						case 10: // ,
@@ -206,13 +245,16 @@ public class Evaluator {
 						if (stopEval) break;
 						
 					}
+					
 					if (c != ')') { //If the current character isn't ')'
 						sym.push(cop);
-					} else {
+					}
+					if (c == ',') {
+						args.push(args.pop()+1);
 					}
 				}
 			}
-			System.out.print(c + " " + sym + " " + num);
+			System.out.print(c + " " + sym + " " + num + " " + args);
 			System.out.println(" " + numFlag); //append the state of the numFlag to the end of the debug message
 		}
 		Double out = num.pop();
