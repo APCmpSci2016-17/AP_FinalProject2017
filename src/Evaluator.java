@@ -109,8 +109,10 @@ public class Evaluator {
 		case "ln": //natural log function
 			num.push(Math.log(num.pop()));
 			break;
-		case "log": //log base 10 function
-			num.push(Math.log10(num.pop()));
+		case "log": //log function
+			double number = num.pop();
+			double base = num.pop();
+			num.push(Math.log(number)/Math.log(base));
 			break;
 		default: //If the function is invalid (not on the list)
 			throw new ArithmeticException();
