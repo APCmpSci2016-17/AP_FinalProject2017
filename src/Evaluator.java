@@ -33,6 +33,11 @@ public class Evaluator {
 	private class Func {
 		public String name;
 		public int args;
+		
+		public Func(String n) {
+			name = n;
+			args = 1;
+		}
 	}
 	
 	private Stack<Integer> sym; //Symbol stack
@@ -53,6 +58,12 @@ public class Evaluator {
 		strBuff = null;
 	}
 	
+	public double stringEval(String expr) {
+		for (char c : ("(" + expr + ")").toCharArray()) readChar(c);
+		return num.pop();
+		
+	}
+	
 	private void readChar(char c) {
 		if (c == ' ') {
 			// Do nothing
@@ -62,24 +73,33 @@ public class Evaluator {
 			else
 				strBuff += Character.toString(c);
 		} else if (Character.isDigit(c)) {
-			
-		} else if (isOp(c) || c == ')') {
-			int cop;
-			if (stackFlag) { //if the last stack modified was the number stack
-				int bin = binaries.indexOf(c); //binary index of the current character
-				if (bin >= 0) { //if the character is in the binary list
-					cop = bin; //set cop = bin
-					stackFlag = false; //last stack modified will be the symbol stack
-				} else { //if the character isn't in the binary list
-					cop = postfixes.indexOf(c); //set cop = postfix index of the current character
-					stackFlag = true; //last stack modified will be the number stack
-				}
-			} else { //if the last stack modified was the symbol stack
-				cop = prefixes.indexOf(c); //set cop = prefix index of the current character
-				stackFlag = false; //last stack modified will be the symbol stack
+			putNumBuff(c);
+		} else {
+			if (numBuff >= 0) {
+				if (decimals >= 0)
+					numBuff /= Math.pow(10, decimals);
+				num.push(numBuff);
+				decimals = -1;
+				numBuff = -1;
+				stackFlag = true;
 			}
 			
-			eval(cop);
+			if (c == '(') {
+				if (strBuff != null) {
+					func.push(new Func(strBuff));
+					strBuff = null;
+					sym.push(9);
+				} else {
+					if (stackFlag) {
+						sym.push(3);
+					}
+					sym.push(0);
+				}
+				stackFlag = false;
+			} else if (isOp(c) || c == ')') {
+				int prec = putSymbol(c);
+				eval(prec);
+			}
 		}
 	}
 	
@@ -149,22 +169,35 @@ public class Evaluator {
 		}
 	}
 	
-	private void putSymbol(int symb) {
-		
+	private int putSymbol(char c) {
+		int symIndex = -1;
+		if (stackFlag) { //if the last stack modified was the number stack
+			int bin = binaries.indexOf(c); //binary index of the current character
+			if (bin >= 0) { //if the character is in the binary list
+				symIndex = bin; //set cop = bin
+				stackFlag = false; //last stack modified will be the symbol stack
+			} else { //if the character isn't in the binary list
+				symIndex = postfixes.indexOf(c); //set cop = postfix index of the current character
+				stackFlag = true; //last stack modified will be the number stack
+			}
+		} else { //if the last stack modified was the symbol stack
+			symIndex = prefixes.indexOf(c); //set cop = prefix index of the current character
+			stackFlag = false; //last stack modified will be the symbol stack
+		}
+		return prec.get(symIndex);
 	}
 	
-	private void putNumBuff() {
-		if (numBuff == -1) return;
-		
-		if (stackFlag) {
-			putSymbol(3);
+	private void putNumBuff(char c) {
+		if (numBuff == -1) {
+			if (stackFlag) {
+				sym.push(3);
+			}
+			numBuff = 0;
 		}
-		if (decimals >= 0) numBuff /= Math.pow(10, decimals);
-		num.push(numBuff);
 		
-		decimals = -1;
-		numBuff = -1;
-		stackFlag = true;
+		if (decimals >= 0) decimals ++;
+		numBuff *= 10;
+		numBuff += Character.digit(c, 10);
 	}
 	
 	private void applyFunc(Func f)  {
