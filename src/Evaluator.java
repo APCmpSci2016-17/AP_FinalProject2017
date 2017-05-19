@@ -8,7 +8,6 @@ public class Evaluator {
 	{ 
 		//HashMap of all operations with corresponding precedence (higher takes place before lower)
 		//Note: Close Parentheses [')'] are not included here as it is handled uniquely
-		put(-1,100); // ) Close Parentheses
 		put(0,0);  // ( Open Parentheses
 		put(1,2);  // + Plus
 		put(2,2);  // - Minus
@@ -68,6 +67,12 @@ public class Evaluator {
 	private void readChar(char c) {
 		if (c == ' ') {
 			// Do nothing
+		} else if (c == '.') {
+			if (numBuff == -1) {
+				numBuff = 0;
+			}
+			
+			decimals = 0;
 		} else if (Character.isAlphabetic(c)) {
 			if (strBuff == null)
 				strBuff = Character.toString(c);
@@ -97,16 +102,15 @@ public class Evaluator {
 					sym.push(0);
 				}
 				stackFlag = false;
-			} else if (isOp(c)) {
-				int prec = putSymbol(c);
-				eval(prec);
+			} else if (isOp(c) || c == ')') {
+				putSymbol(c);
 			}
 		}
 		System.out.println(c + " " + sym + " " + num);
 	}
 	
-	private void eval(int toPred) {
-		while (!sym.isEmpty() && prec.get(sym.peek()) >= toPred) {
+	private void eval(int index) {
+		while (index == -1 || (!sym.isEmpty() && prec.get(sym.peek()) >= prec.get(index))) {
 			
 			boolean stopEval = false;
 			
@@ -171,7 +175,7 @@ public class Evaluator {
 		}
 	}
 	
-	private int putSymbol(char c) {
+	private void putSymbol(char c) {
 		int symIndex = -1;
 		if (stackFlag) { //if the last stack modified was the number stack
 			int bin = binaries.indexOf(c); //binary index of the current character
@@ -187,7 +191,15 @@ public class Evaluator {
 			stackFlag = false; //last stack modified will be the symbol stack
 		}
 		
-		eval(prec.get(symIndex));
+		eval(symIndex);
+		
+		if (c != ')')
+			sym.push(symIndex);
+		if (c == ',') {
+			Func f = func.pop();
+			f.args ++;
+			func.push(f);
+		}
 	}
 	
 	private void putNumBuff(char c) {
