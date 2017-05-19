@@ -58,13 +58,12 @@ public class Evaluator {
 		strBuff = null;
 	}
 	
-	public double stringEval(String expr) {
+	public double stringEval(String expr) throws ArithmeticException {
 		for (char c : ("(" + expr + ")").toCharArray()) readChar(c);
 		return num.pop();
-		
 	}
 	
-	private void readChar(char c) {
+	private void readChar(char c) throws ArithmeticException {
 		if (c == ' ') {
 			// Do nothing
 		} else if (c == '.') {
@@ -109,7 +108,7 @@ public class Evaluator {
 		System.out.println(c + " " + sym + " " + num);
 	}
 	
-	private void eval(int index) {
+	private void eval(int index) throws ArithmeticException {
 		while (index == -1 || (!sym.isEmpty() && prec.get(sym.peek()) >= prec.get(index))) {
 			
 			boolean stopEval = false;
@@ -175,7 +174,7 @@ public class Evaluator {
 		}
 	}
 	
-	private void putSymbol(char c) {
+	private void putSymbol(char c) throws ArithmeticException {
 		int symIndex = -1;
 		if (stackFlag) { //if the last stack modified was the number stack
 			int bin = binaries.indexOf(c); //binary index of the current character
@@ -215,11 +214,12 @@ public class Evaluator {
 		numBuff += Character.digit(c, 10);
 	}
 	
-	private void applyFunc(Func f)  {
+	private void applyFunc(Func f) throws ArithmeticException {
 		int numArgs = f.args;
 		String str = f.name;
 		
 		switch (str) {
+		default: throw new ArithmeticException();
 		case "double": //multiplies the number inputted
 			num.push(num.pop()*2);
 			break;
@@ -251,9 +251,13 @@ public class Evaluator {
 			break;
 		case "arcsin": //inverse sine function
 			num.push(Math.asin(num.pop()));
+			if (num.peek() == Double.NaN)
+				throw new ArithmeticException();
 			break;
 		case "arccos": //inverse cosine function
 			num.push(Math.acos(num.pop()));
+			if (num.peek().equals(Double.NaN))
+				throw new ArithmeticException();
 			break;
 		case "zeta": //Approximation of the Riemann Zeta function
 			double n = num.pop();
