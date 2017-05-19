@@ -8,6 +8,7 @@ public class Evaluator {
 	{ 
 		//HashMap of all operations with corresponding precedence (higher takes place before lower)
 		//Note: Close Parentheses [')'] are not included here as it is handled uniquely
+		put(-1,100); // ) Close Parentheses
 		put(0,0);  // ( Open Parentheses
 		put(1,2);  // + Plus
 		put(2,2);  // - Minus
@@ -96,11 +97,12 @@ public class Evaluator {
 					sym.push(0);
 				}
 				stackFlag = false;
-			} else if (isOp(c) || c == ')') {
+			} else if (isOp(c)) {
 				int prec = putSymbol(c);
 				eval(prec);
 			}
 		}
+		System.out.println(c + " " + sym + " " + num);
 	}
 	
 	private void eval(int toPred) {
@@ -184,7 +186,8 @@ public class Evaluator {
 			symIndex = prefixes.indexOf(c); //set cop = prefix index of the current character
 			stackFlag = false; //last stack modified will be the symbol stack
 		}
-		return prec.get(symIndex);
+		
+		eval(prec.get(symIndex));
 	}
 	
 	private void putNumBuff(char c) {
