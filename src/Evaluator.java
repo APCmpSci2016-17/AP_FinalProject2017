@@ -180,22 +180,22 @@ public class Evaluator {
 	private void applyConst(String constant) {
 		switch (constant) {
 		default: throw new ArithmeticException();
-		case "pi": 
+		case "pi": //Pi
 			num.push(Math.PI);
 			break;
-		case "e":
+		case "e": //Eulers number
 			num.push(Math.E);
 			break;
-		case "tau":
+		case "tau": //Tau
 			num.push(2 * Math.PI);
 			break;
-		case "gr":
+		case "gr": //Golden Ratio
 			num.push(1.618033988749895);
 			break;
-		case "c":
+		case "c": //Speed of light in m/s
 			num.push(299792458d);
 			break;
-		case "G":
+		case "G": //Gravitational Constant
 			num.push(6.674e-11);
 			break;
 		}
@@ -306,12 +306,35 @@ public class Evaluator {
 			double base = num.pop();
 			num.push(Math.log(number)/Math.log(base));
 			break;
+		case "floor": //floor function
+			num.push(Math.floor(num.pop()));
+			break;
+		case "ceiling": //ceiling function
+			num.push(Math.ceil(num.pop()));
+			break;
+		case "nPr": //Permutation function
+			double y = num.pop();
+			double x = num.pop();
+			num.push((double) nPr((int) x, (int) y));
+			break;
+		case "nCr": //Combination function
+			double R = num.pop();
+			double N = num.pop();
+			num.push((double) (nCr((int) N, (int) R)));
 		}
 	}
 
+	private static int nPr(int n, int r) {
+		return factorial(n) / factorial(n-r);
+	}
+	
+	private static int nCr(int n, int r) {
+		return factorial(n) / (factorial (n-r) * factorial(r));
+	}
 	
 	private static int factorial(int n) { //basic recursive factorial method
 		if (n == 1) { return 1; }
+		else if (n < 1) { throw new ArithmeticException(); }
 		return factorial(n-1) * n;
 	}
 
