@@ -58,12 +58,12 @@ public class Evaluator {
 		strBuff = null;
 	}
 	
-	public double stringEval(String expr) throws ArithmeticException {
+	public double stringEval(String expr)   {
 		for (char c : ("(" + expr + ")").toCharArray()) readChar(c);
 		return num.pop();
 	}
 	
-	private void readChar(char c) throws ArithmeticException {
+	private void readChar(char c)   {
 		if (c == ' ') {
 			// Do nothing
 		} else if (c == '.') {
@@ -96,19 +96,21 @@ public class Evaluator {
 					sym.push(9);
 				} else {
 					if (stackFlag) {
-						sym.push(3);
+						putSymbol('*');
 					}
 					sym.push(0);
 				}
 				stackFlag = false;
 			} else if (isOp(c) || c == ')') {
+				if (strBuff != null)
+					applyConst(strBuff);
 				putSymbol(c);
 			}
 		}
 		System.out.println(c + " " + sym + " " + num);
 	}
 	
-	private void eval(int index) throws ArithmeticException {
+	private void eval(int index)   {
 		while (index == -1 || (!sym.isEmpty() && prec.get(sym.peek()) >= prec.get(index))) {
 			
 			boolean stopEval = false;
@@ -117,6 +119,7 @@ public class Evaluator {
 			double op2;
 			
 			switch (sym.pop()) {
+			default: throw new ArithmeticException();
 			case 0: // ( (normal)
 				stopEval = true;
 				break;
@@ -174,7 +177,34 @@ public class Evaluator {
 		}
 	}
 	
-	private void putSymbol(char c) throws ArithmeticException {
+	private void applyConst(String constant) {
+		switch (constant) {
+		default: throw new ArithmeticException();
+		case "pi": 
+			num.push(Math.PI);
+			break;
+		case "e":
+			num.push(Math.E);
+			break;
+		case "tau":
+			num.push(2 * Math.PI);
+			break;
+		case "gr":
+			num.push(1.618033988749895);
+			break;
+		case "c":
+			num.push(299792458d);
+			break;
+		case "G":
+			num.push(6.674e-11);
+			break;
+		}
+		
+		strBuff = null;
+		stackFlag = true;
+	}
+	
+	private void putSymbol(char c)   {
 		int symIndex = -1;
 		if (stackFlag) { //if the last stack modified was the number stack
 			int bin = binaries.indexOf(c); //binary index of the current character
@@ -204,7 +234,7 @@ public class Evaluator {
 	private void putNumBuff(char c) {
 		if (numBuff == -1) {
 			if (stackFlag) {
-				sym.push(3);
+				putSymbol('*');
 			}
 			numBuff = 0;
 		}
@@ -214,13 +244,13 @@ public class Evaluator {
 		numBuff += Character.digit(c, 10);
 	}
 	
-	private void applyFunc(Func f) throws ArithmeticException {
+	private void applyFunc(Func f)   {
 		int numArgs = f.args;
 		String str = f.name;
 		
 		switch (str) {
 		default: throw new ArithmeticException();
-		case "double": //multiplies the number inputted
+		case "double": //multiplies the number input by 2
 			num.push(num.pop()*2);
 			break;
 		case "sin": //Sine function
