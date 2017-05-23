@@ -38,6 +38,10 @@ public class Evaluator {
 			name = n;
 			args = 1;
 		}
+		
+		public String toString() {
+			return name;
+		}
 	}
 	
 	private Stack<Integer> sym; //Symbol stack
@@ -102,12 +106,12 @@ public class Evaluator {
 				}
 				stackFlag = false;
 			} else if (isOp(c) || c == ')') {
-				if (strBuff != null)
+				if (strBuff != null && func.peek().name != "sum")
 					applyConst(strBuff);
 				putSymbol(c);
 			}
 		}
-		System.out.println(c + " " + sym + " " + num);
+		System.out.println(c + " " + sym + " " + num + " " + func);
 	}
 	
 	private void eval(int index)   {
