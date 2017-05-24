@@ -4,6 +4,7 @@ import android.view.View;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -20,9 +21,10 @@ public class DrawingView extends View {
     // Drawing paint
     private Paint drawPaint, canvasPaint;
     // The color black
-    private final int BLACK = 0x000000;
+//    private final int BLACK = 0xFF000000;
     // The color white
-    private final int WHITE = 0xFFFFFF;
+//    private final int WHITE = 0xFFFFFFFF;
+//    private ArrayList
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -33,8 +35,8 @@ public class DrawingView extends View {
         drawPath = new Path();
 
         drawPaint = new Paint();
-        drawPaint.setColor(BLACK);
-        drawPaint.setStrokeWidth(10);
+        drawPaint.setColor(Color.BLACK);
+        drawPaint.setStrokeWidth(8);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -49,14 +51,17 @@ public class DrawingView extends View {
         canvasBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
     }
-    @Override
+//    @Override
     protected void onDraw(Canvas canvas) {
+//        System.out.println("ON DRAW CALLED");
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
+//        drawPath.
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+//        System.out.println("ON TOUCH CALLED");
         float x = event.getX();
         float y = event.getY();
         switch (event.getAction()) {
@@ -77,13 +82,23 @@ public class DrawingView extends View {
         return true;
     }
 
-    // idk if it works lul
+    // Sets canvas color to white
     public void clearCanvas() {
-//        drawCanvas.drawColor(WHITE);
-//        drawCanvas.drawColor(BLACK);
-        Paint test_paint = new Paint();
-        test_paint.setStyle(Paint.Style.FILL);
-        test_paint.setColor(BLACK);
-        drawCanvas.drawRect(0, 0, drawCanvas.getWidth(), drawCanvas.getHeight(), test_paint);
+//        System.out.println("CLEAR CANVAS CALLED!");
+        drawPath.reset();
+        canvasBitmap.eraseColor(Color.WHITE);
+        invalidate();
+    }
+
+    // Draw a bitmap
+    public void drawBitmap(Bitmap bm) {
+        drawPath.reset();
+        canvasBitmap = Bitmap.createScaledBitmap(bm, drawCanvas.getWidth(), drawCanvas.getHeight(), false);
+        invalidate();
+    }
+
+    // Undos the last change
+    public void undo() {
+        System.out.println("UNDO CALLED");
     }
 }
