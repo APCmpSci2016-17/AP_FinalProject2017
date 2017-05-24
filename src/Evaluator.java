@@ -193,7 +193,7 @@ public class Evaluator {
 		case "tau": //Tau
 			num.push(2 * Math.PI);
 			break;
-		case "gr": //Golden Ratio
+		case "phi": //Golden Ratio
 			num.push(1.618033988749895);
 			break;
 		case "c": //Speed of light in m/s
@@ -251,6 +251,8 @@ public class Evaluator {
 	private void applyFunc(Func f)   {
 		int numArgs = f.args;
 		String str = f.name;
+		double num1;
+		double num2;
 		
 		switch (str) {
 		default: throw new ArithmeticException();
@@ -294,10 +296,10 @@ public class Evaluator {
 				throw new ArithmeticException();
 			break;
 		case "zeta": //Approximation of the Riemann Zeta function
-			double n = num.pop();
-			double a = 0;
-			for (int i = 1; i < 10000; i++) a += 1/Math.pow(i,n);
-			num.push(a);
+			num1 = num.pop();
+			num2 = 0;
+			for (int i = 1; i < 10000; i++) num2 += 1/Math.pow(i,num1);
+			num.push(num2);
 			break;
 		case "abs": //absolute value function
 			num.push(Math.abs(num.pop()));
@@ -317,14 +319,29 @@ public class Evaluator {
 			num.push(Math.ceil(num.pop()));
 			break;
 		case "nPr": //Permutation function
-			double y = num.pop();
-			double x = num.pop();
-			num.push((double) nPr((int) x, (int) y));
+			num1 = num.pop();
+			num2 = num.pop();
+			num.push((double) nPr((int) num2, (int) num1));
 			break;
 		case "nCr": //Combination function
-			double R = num.pop();
-			double N = num.pop();
-			num.push((double) (nCr((int) N, (int) R)));
+			num1 = num.pop();
+			num2 = num.pop();
+			num.push((double) (nCr((int) num2, (int) num1)));
+			break;
+		case "lcm": //Least Common Multiple
+			num1 = num.pop();
+			num2 = num.pop();
+			num.push((num1 * num2)/gcd((int)num1, (int)num2));
+			break;
+		case "gcd": //Greatest Common Denominator
+			num1 = num.pop();
+			num2 = num.pop();
+			num.push((double) gcd((int) num1, (int) num2));
+			break;
+		case "rand": //Random number in range
+			num1 = num.pop();
+			num2 = num.pop();
+			num.push((Math.random() * (num1 - num2)) + num2);
 			break;
 		}
 	}
@@ -341,6 +358,13 @@ public class Evaluator {
 		if (n == 1) { return 1; }
 		else if (n < 1) { throw new ArithmeticException(); }
 		return factorial(n-1) * n;
+	}
+	
+	private int gcd (int a, int b) {
+		if (b == 0)
+			return a;
+		else
+			return gcd(b, a % b);
 	}
 
 }
