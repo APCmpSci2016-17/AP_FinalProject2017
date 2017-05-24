@@ -343,9 +343,32 @@ public class Evaluator {
 			num2 = num.pop();
 			num.push((Math.random() * (num1 - num2)) + num2);
 			break;
+		case "prime": //isPrime function
+			num.push((double) (isPrime(num.pop().intValue())));
+			break;
+		case "signum": //Signum function
+			num.push(Math.signum(num.pop()));
+			break;
+		case "sqrt": //Square root
+			num.push(Math.sqrt(num.pop()));
+			break;
+		case "cbrt": //Cube root
+			num.push(Math.cbrt(num.pop()));
+			break;
 		}
 	}
-
+	
+	private int isPrime(int n) {
+		if(n < 2) return 0;
+	    if(n == 2 || n == 3) return 1;
+	    if(n%2 == 0 || n%3 == 0) return 0;
+	    long sqrtN = (long)Math.sqrt(n)+1;
+	    for(long i = 6L; i <= sqrtN; i += 6) {
+	        if(n%(i-1) == 0 || n%(i+1) == 0) return 0;
+	    }
+	    return 1;
+	}
+	
 	private int nPr(int n, int r) {
 		return factorial(n) / factorial(n-r);
 	}
