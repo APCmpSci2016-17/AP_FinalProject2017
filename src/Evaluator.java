@@ -106,7 +106,7 @@ public class Evaluator {
 				}
 				stackFlag = false;
 			} else if (isOp(c) || c == ')') {
-				if (strBuff != null && func.peek().name != "sum")
+				if (strBuff != null)
 					applyConst(strBuff);
 				putSymbol(c);
 			}
@@ -326,12 +326,6 @@ public class Evaluator {
 			double N = num.pop();
 			num.push((double) (nCr((int) N, (int) R)));
 			break;
-		case "sum":
-			Func var = func.pop();
-			Func expr = func.pop();
-			double end = num.pop();
-			double start = num.pop();
-			num.push(summation(expr.name, var.name, start, end));
 		}
 	}
 
@@ -347,16 +341,6 @@ public class Evaluator {
 		if (n == 1) { return 1; }
 		else if (n < 1) { throw new ArithmeticException(); }
 		return factorial(n-1) * n;
-	}
-	
-	private double summation(String expr, String var, double start, double end) {
-		double sum = 0;
-		for (int i = (int) Math.floor(start); i <= end; i ++) {
-			String cur = expr.substring(0);
-			cur.replaceAll(var, "" + i);
-			sum += stringEval(cur);
-		}
-		return sum;
 	}
 
 }
