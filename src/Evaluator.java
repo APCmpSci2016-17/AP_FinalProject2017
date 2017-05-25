@@ -143,7 +143,7 @@ public class Evaluator {
 		} else if (Character.isAlphabetic(c)) {
 			processAlpha(c);
 		} else if (Character.isDigit(c)) {
-			putNumBuff(c);
+			putNumBuff();
 		} else {
 			processSymbol(c);
 		}
@@ -189,7 +189,7 @@ public class Evaluator {
 		}
 	}
 	
-	private void putNumBuff(char c) {
+	private void putNumBuff() {
 		if (numBuff == -1) {
 			if (stackFlag) {
 				putSymbol('*');
