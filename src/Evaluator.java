@@ -2,7 +2,6 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class Evaluator {
-	
 	private static int[] prec = {
 		0, // ( Open Parentheses
 		2, // + Plus
