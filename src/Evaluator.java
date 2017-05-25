@@ -3,48 +3,39 @@ import java.util.Stack;
 
 public class Evaluator {
 	
-	private static HashMap<Integer, Integer> prec = new HashMap<Integer, Integer>() {
-		private static final long serialVersionUID = 1L; //HashMap is serializable, requires this variable (or else it gives a really annoying warning)
-	{
-		//HashMap of all operations with corresponding precedence (higher takes place before lower)
-		//Note: Close Parentheses [')'] are not included here as it is handled uniquely
-		put(0,0);  // ( Open Parentheses
-		put(1,2);  // + Plus
-		put(2,2);  // - Minus
-		put(3,3);  // * Multiply
-		put(4,3);  // / Divide
-		put(5,3);  // % Modulus
-		put(6,5);  // ^ Exponentiate
-		put(7,6);  // ! Factorial
-		put(8,4);  // - Unary Negation
-		put(9,0);  // ( Function parenthesis
-		put(10,1); // , Argument separation
-	}};
+	private static int[] prec = {
+		0, // ( Open Parentheses
+		2, // + Plus
+		2, // - Minus
+		3, // * Multiply
+		3, // / Divide
+		3, // % Modulus
+		5, // ^ Exponentiate
+		6, // ! Factorial
+		4, // - Unary Negation
+		0, // ( Function parenthesis
+		1  // , Argument separation
+	};
 	
-	private static HashMap<Integer, Integer> appType = new HashMap<Integer, Integer>() {
-		private static final long serialVersionUID = 1L;
-	{
-		put(0,1);  // ( Open Parentheses
-		put(1,2);  // + Plus
-		put(2,2);  // - Minus
-		put(3,2);  // * Multiply
-		put(4,2);  // / Divide
-		put(5,2);  // % Modulus
-		put(6,2);  // ^ Exponentiate
-		put(7,1);  // ! Factorial
-		put(8,1);  // - Unary Negation
-		put(9,-1);  // ( Function parenthesis
-		put(10,2); // , Argument separation
-	}}; 
+	private static int[] appType = {
+		1, // ( Open Parentheses
+		2, // + Plus
+		2, // - Minus
+		2, // * Multiply
+		2, // / Divide
+		2, // % Modulus
+		2, // ^ Exponentiate
+		1, // ! Factorial
+		1, // - Unary Negation
+		-1, // ( Function parenthesis
+		2, // , Argument separation
+	}; 
 
 	private static String binaries   = " +-*/%^   ,";  //List of all binary operators. Index important
 	private static String prefixes   = "(       -( ";  //List of all prefix operators. Index important
 	private static String postfixes  = "       !   "; //List of all postfix operators. Index important
+	private static String allOps     = "(+-*/%^!-(,";
 	//Indices of these lists map to corresponding positions in the HashMap
-	
-	private static boolean isOp(char c) {
-		return binaries.indexOf(c) >= 0 || prefixes.indexOf(c) >= 0 || postfixes.indexOf(c) >= 0;
-	}
 	
 	private class Func {
 		public String name;
@@ -139,7 +130,7 @@ public class Evaluator {
 		
 		if (c == '(') {
 			processOpen();
-		} else if (isOp(c) || c == ')') {
+		} else if (allOps.indexOf(c) >= 0 || c == ')') {
 			applyPossibleConst(strBuff);
 			putSymbol(c);
 		}
@@ -157,11 +148,10 @@ public class Evaluator {
 		} else {
 			processSymbol(c);
 		}
-		System.out.println(c + " " + sym + " " + expr + " " + func);
 	}
 	
 	private void eval(int index)   {
-		while (index == -1 || (!sym.isEmpty() && prec.get(sym.peek()) >= prec.get(index))) {
+		while (index == -1 || (!sym.isEmpty() && prec[sym.peek()] >= prec[index])) {
 			int op = sym.pop();
 			// TODO
 		}
