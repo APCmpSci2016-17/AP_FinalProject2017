@@ -6,7 +6,7 @@ public class EvalDriver {
 		do {
 			try {
 			Evaluator eval = new Evaluator();
-			System.out.println(eval.stringEval(ReadInput.readIn("Input a calculation: ")) + "\n");
+			System.out.println(eval.stringConvert(ReadInput.readIn("Input a calculation: ")) + "\n");
 			} catch(ArithmeticException e) {
 				e.printStackTrace();
 				System.out.println("\nA fatal error has occurred.");
