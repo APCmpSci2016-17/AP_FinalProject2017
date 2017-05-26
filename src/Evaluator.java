@@ -119,9 +119,9 @@ public class Evaluator {
 				Stack<Integer> temp = (Stack<Integer>) sym.clone();
 				int countOpen = 0;
 				for (Integer I : temp.toArray(new Integer[temp.size()]))
-					if (I == 0)
+					if (I == 0 || I == 9)
 						countOpen ++;
-				if (countOpen != 2)
+				if (countOpen == 1)
 					throw new ArithmeticException();
 				}
 				
