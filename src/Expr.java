@@ -37,7 +37,10 @@ public class Expr {
 				break;
 			case FUNCTION:
 				r = name + "(";
+				boolean doComma = false;
 				for (Expr e : args) {
+					if (doComma) r += ", ";
+					doComma = true;
 					r += e.toString();
 				}
 				r += ")";
