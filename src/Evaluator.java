@@ -51,8 +51,9 @@ public class Evaluator {
 	private double numBuff; //Number buffer (for multiple digit numbers)
 	private boolean stackFlag; //True when last stack pushed to was the number stack
 	private String strBuff; //String buffer (for functions)
+	private String expression;
 	
-	public Evaluator() {
+	public Evaluator(String s) {
 		sym = new Stack<Integer>();
 		num = new Stack<Double>();
 		func = new Stack<Func>();
@@ -60,14 +61,19 @@ public class Evaluator {
 		numBuff = -1;
 		stackFlag = false;
 		strBuff = null;
+		expression = "(" + s + ")";
 	}
 	
-	public double stringEval(String expr)   {
-		for (char c : ("(" + expr + ")").toCharArray()) readChar(c);
+	public double stringEval()   {
+		for (int i = 0; i < expression.length(); i ++) {
+			readChar(expression.charAt(i), i);
+		}
+		if (!sym.isEmpty())
+			throw new ArithmeticException();
 		return num.pop();
 	}
 	
-	private void readChar(char c)   {
+	private void readChar(char c, int x)   {
 		if (c == ' ') {
 			// Do nothing
 		} else if (c == '.') {
@@ -108,6 +114,17 @@ public class Evaluator {
 			} else if (isOp(c) || c == ')') {
 				if (strBuff != null)
 					applyConst(strBuff);
+				
+				if (c == ')' && x != expression.length() - 1) {
+				Stack<Integer> temp = (Stack<Integer>) sym.clone();
+				int countOpen = 0;
+				for (Integer I : temp.toArray(new Integer[temp.size()]))
+					if (I == 0)
+						countOpen ++;
+				if (countOpen != 2)
+					throw new ArithmeticException();
+				}
+				
 				putSymbol(c);
 			}
 		}
