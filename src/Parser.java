@@ -145,14 +145,14 @@ public class Parser {
 				// Do nothing
 			} else if (c == '.') {
 				processDecimal();
-			} else if (Character.isAlphabetic(c)) {
+			} else if (Character.isAlphabetic(c) || c == '_') {
 				processAlpha(c);
 			} else if (Character.isDigit(c)) {
 				putNumBuff(c);
 			} else {
 				processSymbol(c);
 			}
-			System.out.println(c+": "+expr+" "+sym);
+			//System.out.println(c+": "+expr+" "+sym);
 		}
 		
 		private void eval(int index)   {

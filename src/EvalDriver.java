@@ -11,7 +11,7 @@ public class EvalDriver {
 				e.printStackTrace();
 				System.out.println("\nA fatal error has occurred.");
 			}
-			switch(ReadInput.readIn("Would you like to input another calculation? (Y/N): ").toUpperCase().charAt(0)) {
+			switch(ReadInput.readIn("Would you like to input another calculation? (y/N): ").toUpperCase().charAt(0)) {
 			case 'Y': break;
 			case 'N':
 			default: exit = true;
@@ -19,5 +19,4 @@ public class EvalDriver {
 			}
 		} while (!exit);
 	}
-
 }
