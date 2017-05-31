@@ -6,7 +6,7 @@ public class EvalDriver {
 		do {
 			try {
 			Parser eval = new Parser(ReadInput.readIn("Input a calculation: "));
-			System.out.println(eval.getResult().toString());
+			System.out.println(eval.getResult());
 			} catch(ArithmeticException e) {
 				e.printStackTrace();
 				System.out.println("\nA fatal error has occurred.");

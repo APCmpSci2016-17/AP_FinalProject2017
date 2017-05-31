@@ -2,16 +2,16 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class Expr {
-	private enum Type {
+	public enum Type {
 		CONSTANT,
 		FUNCTION,
 		VARIABLE
 	}
 	
-	private Type type; // The type of the expression
-	private String name = null; // Name of function or variable
-	private Expr[] args = null; // Arguments to function
-	private Integer val = null; // Value of constant
+	public Type type; // The type of the expression
+	public String name = null; // Name of function or variable
+	public Expr[] args = null; // Arguments to function
+	public Integer val = null; // Value of constant
 	
 	public Expr(String name, Expr... args) {
 		this.type = Type.FUNCTION;
@@ -66,7 +66,7 @@ public class Expr {
 					break;
 				case FUNCTION:
 					for (Expr e : cur.args) {
-						toTry.add(e);
+						toTry.push(e);
 					}
 					break;
 			}

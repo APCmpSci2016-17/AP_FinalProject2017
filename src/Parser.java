@@ -145,7 +145,7 @@ public class Parser {
 				// Do nothing
 			} else if (c == '.') {
 				processDecimal();
-			} else if (Character.isAlphabetic(c) || c == '_') {
+			} else if (Character.isAlphabetic(c) || c == '$') {
 				processAlpha(c);
 			} else if (Character.isDigit(c)) {
 				putNumBuff(c);
