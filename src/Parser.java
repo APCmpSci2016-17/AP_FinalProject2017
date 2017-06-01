@@ -77,7 +77,7 @@ public class Parser {
 		}
 		
 		public Expr getResult() {
-			return expr.pop();
+			return expr.peek();
 		}
 		
 		private void processAlpha(char c) {
