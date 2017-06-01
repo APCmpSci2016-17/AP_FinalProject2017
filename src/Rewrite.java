@@ -4,9 +4,15 @@ public class Rewrite {
 	private Expr from;
 	private Expr to;
 	
+	public Rewrite(String all) {
+		String[] parts = all.split("=>", 2);
+		this.from = new Parser(parts[0]).getResult();
+		this.to = new Parser(parts[1]).getResult();
+	}
+	
 	public Rewrite(String from, String to) {
-		this.from = new Expr(from);
-		this.to = new Expr(to);
+		this.from = new Parser(from).getResult();
+		this.to = new Parser(to).getResult();
 	}
 	
 	public Rewrite(Expr from, Expr to) {
@@ -26,7 +32,8 @@ public class Rewrite {
 		
 		if (pattern.type.equals(Expr.Type.FUNCTION) &&
 				expr.type.equals(Expr.Type.FUNCTION) &&
-				pattern.args.length == expr.args.length) {
+				pattern.args.length == expr.args.length &&
+				pattern.name.equals(expr.name)) {
 			HashMap<String, Expr> total = new HashMap<String, Expr>();
 			for (int i = 0; i < pattern.args.length; i++) {
 				HashMap<String, Expr> submatch = match(expr.args[i], pattern.args[i]);
@@ -68,5 +75,9 @@ public class Rewrite {
 		}
 		
 		return e;
+	}
+	
+	public String toString() {
+		return "FROM: " + from.toString() + "\nTO: " + to.toString();
 	}
 }

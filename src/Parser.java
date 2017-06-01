@@ -19,10 +19,12 @@ public class Parser {
 			UNARY,
 			BINARY,
 			FUNCPAREN,
+			COMMA,
+			OPEN,
 		}
 		
 		private static AppType[] appType = {
-			AppType.UNARY, // ( Open Parentheses
+			AppType.OPEN, // ( Open Parentheses
 			AppType.BINARY, // + Plus
 			AppType.BINARY, // - Minus
 			AppType.BINARY, // * Multiply
@@ -32,7 +34,7 @@ public class Parser {
 			AppType.UNARY, // ! Factorial
 			AppType.UNARY, // - Unary Negation
 			AppType.FUNCPAREN, // ( Function parenthesis
-			AppType.BINARY, // , Argument separation
+			AppType.COMMA, // , Argument separation
 		}; 
 
 		private static String binaries   = " +-*/%^   ,";  //List of all binary operators. Index important
@@ -152,11 +154,11 @@ public class Parser {
 			} else {
 				processSymbol(c);
 			}
-			//System.out.println(c+": "+expr+" "+sym);
 		}
 		
-		private void eval(int index)   {
-			while (index == -1 || (!sym.isEmpty() && prec[sym.peek()] >= prec[index])) {
+		private void eval(int index) {
+			boolean stop = false;
+			while (!sym.isEmpty() && !stop && (index == -1 || prec[sym.peek()] >= prec[index])) {
 				int op = sym.pop();
 				if (op == 0) {
 					break;
@@ -172,6 +174,12 @@ public class Parser {
 							break;
 						case FUNCPAREN:
 							applyFunction();
+							stop = true;
+							break;
+						case COMMA:
+							break;
+						case OPEN:
+							stop = true;
 							break;
 					}
 				}
@@ -181,6 +189,8 @@ public class Parser {
 		private void applyPossibleConst(String constant) {
 			if (constant != null) {
 				expr.push(new Expr(constant));
+				strBuff = null;
+				stackFlag = true;
 			}
 		}
 		
@@ -226,6 +236,7 @@ public class Parser {
 		
 		private void applyFunction() {
 			Func f = func.pop();
+			System.out.println(f.name + ":" + f.args + ":" + expr);
 			Expr[] args = new Expr[f.args];
 			for (int i = f.args-1; i >= 0; i--) {
 				args[i] = expr.pop();
