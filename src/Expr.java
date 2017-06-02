@@ -74,4 +74,20 @@ public class Expr {
 		
 		return (String[])vars.toArray();
 	}
+	
+	public boolean equals(Object other) {
+		Expr e = (Expr)other;
+		
+		if (this.type.equals(Type.CONSTANT) && e.type.equals(Type.CONSTANT) && this.val.equals(e.val) ||
+			this.type.equals(Type.VARIABLE) && e.type.equals(Type.VARIABLE) && this.name.equals(e.name)) {
+			return true;
+		} else if (this.type.equals(Type.FUNCTION) && e.type.equals(Type.FUNCTION) && this.name.equals(e.name) && this.args.length == e.args.length) {
+			for (int i = 0; i < this.args.length; i++) {
+				if (!this.args[i].equals(e.args[i])) return false;
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

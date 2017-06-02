@@ -1,9 +1,8 @@
-
 public class EvalDriver {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		boolean exit = false;
-		Rewrite r = new Rewrite("$a*($b+$c)","$a*$b+$a*$c");
+		Rewrite r = new Rewrite("$a*($b+$c) => $a*$b+$a*$c");
 		System.out.println(r);
 		do {
 			try {
