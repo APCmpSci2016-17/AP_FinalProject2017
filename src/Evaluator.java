@@ -32,9 +32,24 @@ public class Evaluator {
 	    return 1;
 	}
 	
+	private Double constant(Expr expr) {
+		switch (expr.name) {
+		default: throw new ArithmeticException();
+		case "pi": return Math.PI;
+		case "e": return Math.E;
+		case "tau": return 2 * Math.PI;
+		case "phi": return 1.618033988749895;
+		case "c": return 299792458d;
+		case "G": return 6.674e-11;
+		}
+	}
 	public Expr run(Expr expr) throws ArithmeticException {
-		if (expr.args.length == 0 || expr.type == Expr.Type.CONSTANT) {
-			return expr;
+		if (expr.type != Expr.Type.FUNCTION) {
+			if (expr.name != null) {
+				return new Expr(constant(expr));
+			} else {
+				return expr;
+			}
 		}
 		
 		Expr one = null;
@@ -44,12 +59,18 @@ public class Evaluator {
 			one = run(expr.args[0]);
 		} else if (expr.args.length != 0) {
 			one = expr.args[0];
+			if (one.name != null) {
+				one = new Expr(constant(one));
+			}
 		}
 		
 		if (expr.args.length > 1 && expr.args[1].type == Expr.Type.FUNCTION) {
 			two = run(expr.args[1]);
 		} else if (expr.args.length > 1) {
 			two = expr.args[1];
+			if (two.name != null) {
+				two = new Expr(constant(two));
+			}
 		}
 		
 //		System.out.println(one.val + " " + two.val);
