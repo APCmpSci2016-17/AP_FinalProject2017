@@ -1,12 +1,12 @@
 
 public class Evaluator {
 
-	private Integer factorial(Integer i) {
-		if (i == 1) return 1;
+	private Long factorial(Integer i) {
+		if (i == 1) return 1l;
 		return i * factorial(i - 1);
 	}
 	
-	private Integer nPr(int n, int r) {
+	private Long nPr(int n, int r) {
 		return factorial(n) / factorial(n-r);
 	}
 	
@@ -17,7 +17,7 @@ public class Evaluator {
 			return gcd(b, a % b);
 	}
 	
-	private Integer nCr(int n, int r) {
+	private Long nCr(int n, int r) {
 		return factorial(n) / (factorial (n-r) * factorial(r));
 	}
 	
@@ -72,8 +72,6 @@ public class Evaluator {
 				two = new Expr(constant(two));
 			}
 		}
-		
-//		System.out.println(one.val + " " + two.val);
 		
 		switch(expr.name) {
 		default: throw new ArithmeticException();
