@@ -25,7 +25,8 @@ public class Evaluator {
 			two = expr.args[1];
 		}
 		
-		System.out.println(one.val + " " + two.val);
+//		System.out.println(one.val + " " + two.val);
+		
 		switch(expr.name) {
 		default: throw new ArithmeticException();
 		case "+": 
