@@ -20,6 +20,11 @@ public class Rewrite {
 		this.to = to;
 	}
 	
+	public static class RewriteResult {
+		public Expr result;
+		public boolean changed;
+	}
+	
 	private static HashMap<String, Expr> match(Expr expr, Expr pattern) {
 		if (pattern.type.equals(Expr.Type.VARIABLE) && pattern.name.startsWith("$")) {
 			return new HashMap<String, Expr>() {{ put(pattern.name,expr); }};
@@ -46,7 +51,7 @@ public class Rewrite {
 		return null;
 	}
 	
-	public static Expr replace(Expr to, HashMap<String, Expr> vars) {
+	private static Expr replace(Expr to, HashMap<String, Expr> vars) {
 		if (to.type.equals(Expr.Type.VARIABLE) && to.name.startsWith("$")) {
 			return vars.getOrDefault(to.name, to);
 		} else if (to.type.equals(Expr.Type.CONSTANT) || to.type.equals(Expr.Type.VARIABLE)) {
@@ -61,23 +66,55 @@ public class Rewrite {
 	}
 	
 	public Expr run(Expr e) {
+		return this.runWithChanged(e).result;
+	}
+	
+	public RewriteResult runWithChanged(Expr e) {
 		HashMap<String, Expr> vars = match(e, from);
 		if (vars != null) {
-			return replace(to, vars);
+			return new RewriteResult() {{ result = replace(to, vars); changed = true; }};
 		} else if (e.type.equals(Expr.Type.FUNCTION)) {
 			Expr top = new Expr(e.name, e.args);
-			
+			boolean change = false;
 			for (int i = 0; i < e.args.length; i++) {
-				top.args[i] = run(e.args[i]);
+				RewriteResult r = runWithChanged(e.args[i]);
+				top.args[i] = r.result;
+				change = change || r.changed;
 			}
-			
-			return top;
+			final boolean thanksjava = change; // THANKS JAVA
+			return new RewriteResult() {{ result = top; changed = thanksjava; }};
 		}
 		
-		return e;
+		return new RewriteResult() {{ result = e; changed = false; }};
 	}
 	
 	public String toString() {
 		return "FROM: " + from.toString() + "\nTO: " + to.toString();
+	}
+	
+	public static Rewrite[] readArray(String s) {
+		String lines[] = s.split("\\r?\\n");
+		Rewrite[] r = new Rewrite[lines.length];
+		
+		for (int i = 0; i < lines.length; i++) {
+			r[i] = new Rewrite(lines[i]);
+		}
+		
+		return r;
+	}
+	
+	public static Expr runAll(Expr e, Rewrite[] rs) {
+		Expr q = e;
+		
+		for (Rewrite r : rs) {
+			boolean changed = false;
+			while (!changed) {
+				RewriteResult res = r.runWithChanged(q);
+				q = res.result;
+				changed = changed || res.changed;
+			}
+		}
+		
+		return q;
 	}
 }
