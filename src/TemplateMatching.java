@@ -9,7 +9,7 @@ public class TemplateMatching {
 
 	public static void main(String[] args) {
 		//tuning parameters and instantiation of image and arrays
-		Picture image = new Picture("7+8.jpg");
+		Picture image = new Picture("minus.jpg");
 		double[][][] colored = toMatrix(image.getPixels2D());
 		image.explore();
 
@@ -23,12 +23,6 @@ public class TemplateMatching {
 //			System.out.println(detectedCharacters.get(i).toString());
 //		}
 		
-		
-
-		
-
-
-
 	}
 	public static double[][] findRMAP(double[][] grayed) {
 		double[][] bordered = createBorderReflect(grayed);
@@ -115,7 +109,7 @@ public class TemplateMatching {
 			int rMax = points.get(0)[0];
 			int cMax = points.get(0)[1];
 
-			for(int i = 0; i < points.size(); i++){
+			for(int i = 1; i < points.size(); i++) {
 				if(points.get(i)[0] < rMin){
 					rMin = points.get(i)[0];
 				}
@@ -135,8 +129,9 @@ public class TemplateMatching {
 				arrEval[points.get(i)[0] - rMin + 2][points.get(i)[1] - cMin + 2] = 255; //set black points to white then invert later
 			}
 			arrEval = invert(arrEval);
+			
 			displayImg(arrEval);
-			detectedCharacters.add(new DetectedChar(arrEval, new int []{5, 5}));
+			detectedCharacters.add(new DetectedChar(arrEval, new int [] {r, c} ));
 		}
 	}
 
@@ -144,28 +139,28 @@ public class TemplateMatching {
 		points.add(new int[]{r, c});
 		arr[r][c] = 255;
 
-		if(r < arr.length - 1 && arr[r+1][c] == 0){
+		if(r < arr.length - 1 && arr[r+1][c] == 0) {
 			recurseChar(points, arr, r+1, c);
 		}
-		if(r!= 0 && arr[r-1][c] == 0){
+		if(r!= 0 && arr[r-1][c] == 0) {
 			recurseChar(points, arr, r-1, c);
 		}
-		if(c != arr[0].length - 1 && arr[r][c + 1] == 0){
+		if(c != arr[0].length - 1 && arr[r][c + 1] == 0) {
 			recurseChar(points, arr, r, c + 1);
 		}
-		if(c != 0 && arr[r][c - 1] == 0){
+		if(c != 0 && arr[r][c - 1] == 0) {
 			recurseChar(points, arr, r, c - 1);
 		}
-		if(r != arr.length - 1 && c!= arr[0].length - 1 && arr[r+1][c+1] == 0){
+		if(r != arr.length - 1 && c!= arr[0].length - 1 && arr[r+1][c+1] == 0) {
 			recurseChar(points, arr, r + 1, c + 1);
 		}
-		if(r!= 0 && c!= 0 && arr[r-1][c-1] == 0){
+		if(r!= 0 && c!= 0 && arr[r-1][c-1] == 0) {
 			recurseChar(points, arr, r - 1, c - 1);
 		}
-		if(r != arr.length - 1 && c!= 0 && arr[r+1][c-1] == 0){
+		if(r != arr.length - 1 && c!= 0 && arr[r+1][c-1] == 0) {
 			recurseChar(points, arr, r + 1, c - 1);
 		}
-		if(r != 0 && c!= arr[0].length - 1 && arr[r-1][c+1] == 0){
+		if(r != 0 && c!= arr[0].length - 1 && arr[r-1][c+1] == 0) {
 			recurseChar(points, arr, r - 1, c + 1);
 		}
 

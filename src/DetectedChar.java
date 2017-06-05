@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DetectedChar {
 	// Corners
@@ -15,15 +16,16 @@ public class DetectedChar {
 
 	// Calculated data
 	private int detectedCharId;
-	private double pixelDensity; 
+//	private double pixelDensity; 
+	private double avgDistanceCornerToOrigin;
 
 	// Data for stuff
 
 	public DetectedChar(double[][] imgData, int[] position) {
-		this.position[0] = position[0];
-		this.position[1] = position[1];
+		this.position = new int[] {position[0], position[1]};
 		ArrayList<Corner> corners = cornerDetection(imgData);
-		pixelDensity = pixelDensity(imgData);
+		avgDistanceCornerToOrigin = getAvgDistanceCornerToOrigin(corners, imgData);
+//		pixelDensity = pixelDensity(imgData);
 		int[] mid = { imgData.length / 2, imgData[0].length / 2 }; // [r, c]
 		// //*Connor
 		// hey Ryan
@@ -67,10 +69,10 @@ public class DetectedChar {
 		}
 		
 		
-		
-		//printData();
+		printData();
 	}
 
+	/*
 	private double pixelDensity(double[][] imgData) {
 		int sum = 0;
 		for(int i = 0; i < imgData.length; i++){
@@ -81,7 +83,7 @@ public class DetectedChar {
 			}
 		}
 		return ((double)sum) / (imgData.length * imgData[0].length);
-	}
+	}*/
 
 	/*
 	 * Returns ArrayList of corners locations
@@ -132,14 +134,25 @@ public class DetectedChar {
 		// TemplateMatching.displayImg(nonMax);
 		return corners;
 	}
+	
+	
+	private double getAvgDistanceCornerToOrigin(ArrayList<Corner> corners, double[][] imgData) {
+		int sum = 0;
+		for (int i = 0; i < corners.size(); i++) {
+			int xDist = imgData[0].length - corners.get(i).getC();
+			int yDist = imgData.length - corners.get(i).getR();
+			sum += Math.sqrt( xDist*xDist + yDist*yDist );
+		}
+		return (double)sum / corners.size();
+	}
 
 	public int getDetectedCharId() {
 		return detectedCharId;
 	}
 
 	public void printData() {
-		System.out.println("Pixel density: " + pixelDensity);
-		System.out.println("__Corners__");
+		System.out.println("============START PRINT DATA==============");
+		System.out.println("Average Distance From Corners to Origin: " + avgDistanceCornerToOrigin);
 		System.out.println("Top " + cornersTop);
 		System.out.println("Right " + cornersRight);
 		System.out.println("Bot " + cornersBot);
