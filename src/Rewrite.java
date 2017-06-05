@@ -6,13 +6,13 @@ public class Rewrite {
 	
 	public Rewrite(String all) {
 		String[] parts = all.split("=>", 2);
-		this.from = new Parser(parts[0]).getResult();
-		this.to = new Parser(parts[1]).getResult();
+		this.from = Parser.parse(parts[0]);
+		this.to = Parser.parse(parts[1]);
 	}
 	
 	public Rewrite(String from, String to) {
-		this.from = new Parser(from).getResult();
-		this.to = new Parser(to).getResult();
+		this.from = Parser.parse(from);
+		this.to = Parser.parse(to);
 	}
 	
 	public Rewrite(Expr from, Expr to) {

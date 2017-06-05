@@ -1,27 +1,26 @@
-
 public class Evaluator {
 
-	private Long factorial(Integer i) {
+	private static Long factorial(int i) {
 		if (i == 1) return 1l;
 		return i * factorial(i - 1);
 	}
 	
-	private Long nPr(int n, int r) {
+	private static Long nPr(int n, int r) {
 		return factorial(n) / factorial(n-r);
 	}
 	
-	private Integer gcd (int a, int b) {
+	private static Integer gcd (int a, int b) {
 		if (b == 0)
 			return a;
 		else
 			return gcd(b, a % b);
 	}
 	
-	private Long nCr(int n, int r) {
+	private static Long nCr(int n, int r) {
 		return factorial(n) / (factorial (n-r) * factorial(r));
 	}
 	
-	private Integer isPrime(int n) {
+	private static Integer isPrime(int n) {
 		if(n < 2) return 0;
 	    if(n == 2 || n == 3) return 1;
 	    if(n%2 == 0 || n%3 == 0) return 0;
@@ -32,7 +31,21 @@ public class Evaluator {
 	    return 1;
 	}
 	
-	private Double constant(Expr expr) {
+	public static double eval(Expr e) {	
+		switch (e.type) {
+			case CONSTANT:
+				return constant(e);
+			case FUNCTION:
+				double[] as = new double[e.args.length];
+				for (int i = 0; i < as.length; i++)
+					as[i] = eval(e.args[i]);
+				return runFunc(e.name, as);
+			default:
+				throw new ArithmeticException();
+		}
+	}
+	
+	private static Double constant(Expr expr) {
 		switch (expr.name) {
 		default: throw new ArithmeticException();
 		case "pi": return Math.PI;
@@ -43,112 +56,85 @@ public class Evaluator {
 		case "G": return 6.674e-11;
 		}
 	}
-	public Expr run(Expr expr) throws ArithmeticException {
-		if (expr.type != Expr.Type.FUNCTION) {
-			if (expr.name != null) {
-				return new Expr(constant(expr));
-			} else {
-				return expr;
-			}
-		}
-		
-		Expr one = null;
-		Expr two = null;
-		
-		if (expr.args.length >= 1 && expr.args[0].type == Expr.Type.FUNCTION) {
-			one = run(expr.args[0]);
-		} else if (expr.args.length != 0) {
-			one = expr.args[0];
-			if (one.name != null) {
-				one = new Expr(constant(one));
-			}
-		}
-		
-		if (expr.args.length > 1 && expr.args[1].type == Expr.Type.FUNCTION) {
-			two = run(expr.args[1]);
-		} else if (expr.args.length > 1) {
-			two = expr.args[1];
-			if (two.name != null) {
-				two = new Expr(constant(two));
-			}
-		}
-		
-		switch(expr.name) {
+	
+	public static double runFunc(String op, double[] a) throws ArithmeticException {
+		double e;
+		switch(op) {
 		default: throw new ArithmeticException();
 		case "+": 
-			return new Expr(one.val + two.val);
+			return a[0] + a[1];
 		case "-":
-			if (expr.args.length == 1)
-				return new Expr(-one.val);
-				else
-				return new Expr(one.val - two.val);
+			if (a.length == 1)
+				return -a[0];
+			else
+				return a[0]-a[1];
 		case "*":
-			return new Expr(one.val * two.val);
+			return a[0] * a[1];
 		case "/":
-			return new Expr(one.val/two.val);
+			return a[0] / a[1];
 		case "^":
-			return new Expr(Math.pow(one.val, two.val));
+			return Math.pow(a[0], a[1]);
 		case "%":
-			return new Expr(one.val % two.val);
+			return a[0] % a[1];
 		case "!":
-			return new Expr(factorial((int) Math.round(one.val)));
+			return factorial((int)a[0]);
 		case "sin":
-			return new Expr(Math.sin(one.val));
+			return Math.sin(a[0]);
 		case "cos":
-			return new Expr(Math.cos(one.val));
+			return Math.cos(a[0]);
 		case "tan":
-			return new Expr(Math.tan(one.val));
+			return Math.tan(a[0]);
 		case "sec":
-			return new Expr(1.0 / Math.cos(one.val));
+			return 1.0 / Math.cos(a[0]);
 		case "csc":
-			return new Expr(1.0 / Math.sin(one.val));
+			return 1.0 / Math.sin(a[0]);
 		case "cot":
-			return new Expr(1.0 / Math.tan(one.val));
+			return 1.0 / Math.tan(a[0]);
 		case "arctan":
-			return new Expr(Math.atan(one.val));
+			return Math.atan(a[0]);
 		case "arcsin":
-			Expr e = new Expr(Math.asin(one.val));
-			if (e.val.equals(Double.NaN)) throw new ArithmeticException();
+			e = Math.asin(a[0]);
+			if (e == Double.NaN) throw new ArithmeticException();
 			return e;
 		case "arccos":
-			e = new Expr(Math.acos(one.val));
-			if (e.val.equals(Double.NaN)) throw new ArithmeticException();
+			e = Math.acos(a[0]);
+			if (e == Double.NaN) throw new ArithmeticException();
 			return e;
 		case "zeta":
-			int count = 0;
-			for (int i = 1; i < 10000; i ++) count += 1/Math.pow(i, one.val);
-			return new Expr(count);
+			e = 0;
+			for (int i = 1; i < 10000; i ++) e += 1/Math.pow(i, a[0]);
+			return e;
 		case "abs":
-			return new Expr(Math.abs(one.val));
+			return Math.abs(a[0]);
 		case "ln":
-			return new Expr(Math.log(one.val));
+			return Math.log(a[0]);
 		case "log":
-			return new Expr(Math.log(one.val)/Math.log(two.val));
+			return Math.log(a[0])/Math.log(a[1]);
 		case "floor":
-			return new Expr(Math.floor(one.val));
+			return Math.floor(a[0]);
 		case "ceil":
-			return new Expr(Math.ceil(one.val));
+			return Math.ceil(a[0]);
 		case "nPr":
-			return new Expr(nPr((int) Math.round(one.val), (int) Math.round(two.val)));
+			return nPr((int)a[0], (int)a[1]);
 		case "nCr":
-			return new Expr(nCr((int) Math.round(one.val), (int) Math.round(two.val)));
+			return nCr((int)a[0], (int)a[1]);
 		case "lcm":
-			return new Expr((one.val * two.val) / gcd((int) Math.round(one.val), (int) Math.round(two.val)));
+			return (a[0]*a[1]) / gcd((int)a[0], (int)a[1]);
 		case "gcd":
-			return new Expr(gcd((int) Math.round(one.val), (int) Math.round(two.val)));
+			return gcd((int)a[0], (int)a[1]);
 		case "rand":
-			return new Expr(Math.random()*(one.val - two.val) + two.val);
+			return (int)(Math.random()*(a[1]-a[0]))+a[0];
 		case "prime":
-			return new Expr(isPrime(one.val.intValue()));
+			return isPrime((int)a[0]);
 		case "signum":
-			return new Expr(Math.signum(one.val));
+			return Math.signum(a[0]);
 		case "sqrt":
-			return new Expr(Math.sqrt(one.val));
+			return Math.sqrt(a[0]);
 		case "cbrt":
-			return new Expr(Math.cbrt(one.val));
+			return Math.cbrt(a[0]);
 		case "max":
-			e = new Expr(one.val);
-			for (int i = 1; i < expr.args.length; i ++) e.val = Math.max(e.val, expr.args[i].val);
+			e = a[0];
+			for (int i = 1; i < a.length; i ++) e = Math.max(e, a[i]);
 			return e;
 		}
 	}
