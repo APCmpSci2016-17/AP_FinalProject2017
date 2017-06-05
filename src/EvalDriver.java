@@ -1,14 +1,18 @@
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class EvalDriver {
 
 	public static void main(String[] args) throws Exception {
 		boolean exit = false;
-		Rewrite r = new Rewrite("$a*($b+$c) => $a*$b+$a*$c");
-		System.out.println(r);
+		Rewrite[] rs = Rewrite.readArray(new String(Files.readAllBytes(Paths.get("rules.txt" /* TEMP FILE */))));
+		System.out.println(rs);
 		do {
 			try {
 			Expr e = Parser.parse(ReadInput.readIn("Input a calculation: "));
-			System.out.println(r.run(e));
-			System.out.println(Evaluator.eval(e));
+			Expr r = Rewrite.runAll(e, rs);
+			System.out.println(r);
+			System.out.println(Evaluator.eval(r));
 			} catch(ArithmeticException e) {
 				e.printStackTrace();
 				System.out.println("\nA fatal error has occurred.");
