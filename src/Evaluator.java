@@ -1,26 +1,26 @@
 public class Evaluator {
 
-	private static Long factorial(int i) {
+	private static long factorial(int i) {
 		if (i == 1) return 1l;
 		return i * factorial(i - 1);
 	}
 	
-	private static Long nPr(int n, int r) {
+	private static long nPr(int n, int r) {
 		return factorial(n) / factorial(n-r);
 	}
 	
-	private static Integer gcd (int a, int b) {
+	private static int gcd (int a, int b) {
 		if (b == 0)
 			return a;
 		else
 			return gcd(b, a % b);
 	}
 	
-	private static Long nCr(int n, int r) {
+	private static long nCr(int n, int r) {
 		return factorial(n) / (factorial (n-r) * factorial(r));
 	}
 	
-	private static Integer isPrime(int n) {
+	private static int isPrime(int n) {
 		if(n < 2) return 0;
 	    if(n == 2 || n == 3) return 1;
 	    if(n%2 == 0 || n%3 == 0) return 0;
