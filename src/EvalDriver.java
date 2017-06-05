@@ -3,11 +3,13 @@ public class EvalDriver {
 	public static void main(String[] args) throws Exception {
 		boolean exit = false;
 		Rewrite r = new Rewrite("$a*($b+$c) => $a*$b+$a*$c");
+		Evaluator eval = new Evaluator();
 		System.out.println(r);
 		do {
 			try {
-			Parser eval = new Parser(ReadInput.readIn("Input a calculation: "));
-			System.out.println(r.run(eval.getResult()));
+			Parser p = new Parser(ReadInput.readIn("Input a calculation: "));
+			System.out.println(r.run(p.getResult()));
+			System.out.println(eval.run(r.run(p.getResult())));
 			} catch(ArithmeticException e) {
 				e.printStackTrace();
 				System.out.println("\nA fatal error has occurred.");

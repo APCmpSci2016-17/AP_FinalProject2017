@@ -11,7 +11,7 @@ public class Expr {
 	public Type type; // The type of the expression
 	public String name = null; // Name of function or variable
 	public Expr[] args = null; // Arguments to function
-	public Integer val = null; // Value of constant
+	public Double val = null; // Value of constant
 	
 	public Expr(String name, Expr... args) {
 		this.type = Type.FUNCTION;
@@ -24,7 +24,7 @@ public class Expr {
 		this.name = name;
 	}
 	
-	public Expr(int val) {
+	public Expr(double val) {
 		this.type = Type.CONSTANT;
 		this.val = val;
 	}
